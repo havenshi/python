@@ -12,14 +12,14 @@ compare(4,2)
 compare(5,5)
 
 #2.Boolean expression
-#~ expression = raw_input("Enter a boolean expression in two variables, p and q: ")
-#~ def truth_table(expression):
-	#~ print " p      q      %s"  % expression
-	#~ print len( " p      q      %s"  % expression)*"="
-	#~ for p in True, False:
-		#~ for q in True, False:
-			#~ print "%-7s %-7s %-7s" % (p, q, eval(expression))
-#~ truth_table(expression)
+expression = raw_input("Enter a boolean expression in two variables, p and q: ")
+def truth_table(expression):
+	print " p      q      %s"  % expression
+	print len( " p      q      %s"  % expression)*"="
+	for p in True, False:
+		for q in True, False:
+			print "%-7s %-7s %-7s" % (p, q, eval(expression))
+truth_table(expression)
 #not(p or q), not(p) and not(q) are logically equivalent;
 #not(p and q), not(p) or not(q) are logically equivalent.
 
