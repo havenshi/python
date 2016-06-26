@@ -90,22 +90,22 @@ import os
 import sys
 
 def getroot():
-	if len(sys.argv) == 1:
+	if len(sys.argv) == 1:  #sys.argv is the list of command-line arguments. len(sys.argv) is the number of command-line arguments.
 		path = ''
 	else:
-		path = sys.argv[1]
+		path = sys.argv[1]  #get the first argument after the script for a filename
 
-	if os.path.isabs(path):
+	if os.path.isabs(path): #absolute path
 		tree_root = path
 	else:
-		tree_root = os.path.join(os.getcwd(), path)
+		tree_root = os.path.join(os.getcwd(), path)   #returns current working directory of a process + path
 
 	return tree_root
 
 
 def getdirlist(path):
-	dirlist = os.listdir(path)
-	dirlist = [name for name in dirlist if name[0] != '.']
+	dirlist = os.listdir(path)   #returns a list containing the names of the entries in the directory given by path
+	dirlist = [name for name in dirlist if name[0] != '.']  #omit '.'
 	dirlist.sort()
 	return dirlist
 
@@ -114,19 +114,19 @@ def traverse(path, prefix='|--', s='.\n', f=0, d=0):
 	dirlist = getdirlist(path)
 
 	for num, file in enumerate(dirlist):
-		lastprefix = prefix[:-3] + '`--'
+		lastprefix = prefix[:-3] + '`--'            #prefix='|--',lastprefix='`--'
 		dirsize = len(dirlist)
 
 		if num < dirsize - 1:
-			s += '%s %s\n' % (prefix, file)
+			s += '%s %s\n' % (prefix, file)         #pres='|-- 123.txt',lasts='`-- 456.txt'
 		else:
 			s += '%s %s\n' % (lastprefix, file)
-		path2file = os.path.join(path, file)
+		path2file = os.path.join(path, file)        #path join file(find subdirectory!!!)
 
-		if os.path.isdir(path2file):
+		if os.path.isdir(path2file):                #return True if that path exists and is a directory
 			d += 1
-			if getdirlist(path2file):
-				s, f, d = traverse(path2file, '|   ' + prefix, s, f, d)
+			if getdirlist(path2file):               #return True if subdirectory is not empty
+				s, f, d = traverse(path2file, '|   ' + prefix, s, f, d) #path recursion(open subdirectory!!!)
 		else:
 			f += 1
 
@@ -394,18 +394,18 @@ if __name__ == "__main__":
 #5.raise error
 def readposint(prompt = 'Please enter a positive integer: '):
     while True:
-        posint = raw_input(prompt)
-        try:
-            posint = float(posint)
-            if posint != int(posint):
-                raise ValueError, '%s is not an integer' % posint
-            elif posint < 1:
-                raise ValueError, '%s is not positive' % posint
-            break
-        except:
-            print '%s is not a positive integer. Try again.' % posint
+		posint = raw_input(prompt)
+		posint = float(posint)
+		if posint != int(posint):
+			raise ValueError, '%s is not an integer' % posint
+		elif posint <= 0:
+			raise ValueError, '%s is not positive' % posint
+		break
             
     return int(posint)
+    
+readposint()
+
 
 #6.list
 nums = [1, 2, 3, 4]
@@ -417,3 +417,11 @@ print [(x, y) for x in nums for y in nums]
 nums = [1, 2, 3, 4]
 print [(x, y) for x in nums for y in nums if x != y]
 
+
+#7.factorial
+def f(n):
+    a, b = 0, 1
+    for i in range(0, n):
+        a, b = b, a + b
+    return a
+print f(5)
