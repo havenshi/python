@@ -171,3 +171,89 @@ def play_game():
 #~ if __name__ == '__main__':
 	#~ play_game()
 
+
+# 1.test
+d = {'apples': 15, 'bananas': 35, 'grapes': 12}
+print d['bananas']
+
+d['oranges'] = 20
+print len(d)
+
+print d.has_key('grapes')
+
+print d.get('pears', 0)
+
+fruits = d.keys()
+fruits.sort()
+print fruits                    # ['apples', 'bananas', 'grapes', 'oranges']
+
+del d['apples']
+print d.has_key('apples')       # False
+
+def add_fruit(inventory, fruit, quantity=0):
+	"""
+	Adds quantity of fruit to inventory.
+
+	  >>> new_inventory = {}
+	  >>> add_fruit(new_inventory, 'strawberries', 10)
+	  >>> new_inventory.has_key('strawberries')
+	  True
+	  >>> new_inventory['strawberries']
+	  10
+	  >>> add_fruit(new_inventory, 'strawberries', 25)
+	  >>> new_inventory['strawberries']
+	  35
+	"""
+	if inventory.has_key(fruit):
+		inventory[fruit] += quantity
+	else:
+		inventory[fruit] = quantity
+	
+if __name__ == '__main__':
+	import doctest
+	doctest.testmod()
+
+# 2.Alice
+import string
+
+source = open('alice_in_wonderland.txt', 'r')
+text = source.read()
+source.close()
+
+newfile = open('alice_words.txt', 'w')
+
+def count(text):
+	for i in reversed(range(len(text))):                   # alpha remain
+		if (not text[i].isalpha()) and text[i]!=' ':
+			text=text[:i]+text[i+1:]
+	
+	lower_text=text.lower()                  # lower         
+	
+	word_list=string.split(lower_text)       # remove space, transfer to list
+	
+	
+	word_count_dict={}                       # count every word
+	for single_word in word_list:
+		word_count_dict[single_word]=word_count_dict.get(single_word,0)+1
+	
+	counts_list = word_count_dict.items()    # [(,),(,)]
+	counts_list.sort()                       # sort
+	
+	return counts_list
+	
+counts_list=count(text)                      # extract result
+
+newfile.write('%-18s%s\n' % ('Word','Count'))
+newfile.write('='*23+'\n')
+for item in counts_list:
+	newfile.write('%-18s%d\n' % (item[0],item[1]))
+
+
+newfile.close()
+
+#3. longest
+longest=('',0)
+for item in counts_list:
+	if len(item[0])>longest[1]:
+		longest=(item[0],len(item[0]))
+print longest
