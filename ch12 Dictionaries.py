@@ -224,11 +224,12 @@ newfile = open('alice_words.txt', 'w')
 
 def count(text):
 	for i in reversed(range(len(text))):                   # alpha remain
-		if (not text[i].isalpha()) and text[i]!=' ':
+		if (not text[i].isalpha()) and text[i]!=' ' and text[i]!='-':
 			text=text[:i]+text[i+1:]
 	
 	lower_text=text.lower()                  # lower         
 	
+	lower_text=' '.join(lower_text.split('--'))
 	word_list=string.split(lower_text)       # remove space, transfer to list
 	
 	
