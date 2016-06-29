@@ -36,6 +36,8 @@ print letter_items                    #[('M', 1), ('i', 4), ('p', 2), ('s', 4)]
 # robots.py
 #
 from gasp import *
+from random import randint
+
 
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
@@ -46,45 +48,49 @@ GRID_HEIGHT = SCREEN_HEIGHT/10 - 1                    # grid,(63,47)
 def place_player():
 	x = random.randint(0, GRID_WIDTH)                 # a random integer 
 	y = random.randint(0, GRID_HEIGHT)
-	return {'shape': Circle((10*x+5, 10*y+5), 5, filled=True), 'x': x, 'y': y}  # player is circle. dict,{'shape','x','y'}
+	return {'shape': Circle((10*x+5, 10*y+5), 5, filled=True), 'x': x, 'y': y}               # player is circle. dict,{'shape','x','y'}
 
 def place_robot(x, y, junk=False):
-	return {'shape': Box((10*x, 10*y), 10, 10, filled=junk), 'x': x, 'y': y, 'junk': junk}                 # robot is box. dict,{'shape','x','y'}
+	return {'shape': Box((10*x, 10*y), 10, 10, filled=junk), 'x': x, 'y': y, 'junk': junk}   # robot is box. dict,{'shape','x','y'}
 
 def place_robots(numbots):                            # place all the robots in a list if they don't collide
 	robots = []
-	for i in range(numbots):            # 3.check each remaining robots to see if they have collided with another robot, disgard all the robots and place a pile of junk at the locations they occupied
+	for i in range(numbots):          
 		x = random.randint(0, GRID_WIDTH)
 		y = random.randint(0, GRID_HEIGHT)
 		robots.append(place_robot(x, y, junk=False))
 	return robots
 
 junk = []
-	
+
+
 def move_player(player):
 	update_when('key_pressed')
 	if key_pressed('escape'):
 		return True                                                 # y<G
-	elif key_pressed('4'):                                 #       __ __ __
+	elif key_pressed('a'):                                 #       __ __ __
 		if player['x'] > 0: player['x'] -= 1               #      |        |
-	elif key_pressed('7'):                                 # x>0  |        |  x<G
+	elif key_pressed('q'):                                 # x>0  |        |  x<G
 		if player['x'] > 0: player['x'] -= 1               #      |__ __ __|
 		if player['y'] < GRID_HEIGHT: player['y'] += 1             
-	elif key_pressed('8'):                                          # y>0
+	elif key_pressed('w'):                                          # y>0
 		if player['y'] < GRID_HEIGHT: player['y'] += 1
-	elif key_pressed('9'):
+	elif key_pressed('e'):
 		if player['x'] < GRID_WIDTH: player['x'] += 1
 		if player['y'] < GRID_HEIGHT: player['y'] += 1
-	elif key_pressed('6'):
+	elif key_pressed('d'):
 		if player['x'] < GRID_WIDTH: player['x'] += 1
-	elif key_pressed('3'):
+	elif key_pressed('c'):
 		if player['x'] < GRID_WIDTH: player['x'] += 1
 		if player['y'] > 0: player['y'] -= 1
-	elif key_pressed('2'):
+	elif key_pressed('x'):
 		if player['y'] > 0: player['y'] -= 1
-	elif key_pressed('1'):
+	elif key_pressed('z'):
 		if player['x'] > 0: player['x'] -= 1
 		if player['y'] > 0: player['y'] -= 1
+	elif key_pressed('0'):                                         # player jump to a random location
+		if 0<player['x'] < GRID_WIDTH: player['x'] = random.randint(0, GRID_WIDTH)
+		if 0<player['y'] < GRID_HEIGHT: player['y'] = random.randint(0, GRID_HEIGHT)
 	else:
 		return False
 
@@ -92,47 +98,6 @@ def move_player(player):
 
 	return False
 
-def collided(thing1, thing2):
-	return thing1['x'] == thing2['x'] and thing1['y'] == thing2['y'] # game end as soon as the player is caught, or else the robot just follows her
-																	 
-def check_collisions(robots, junk, player):
-	# check whether player has collided with anything
-	for thing in robots + junk:
-		if collided(thing, player):                    # 1.check whether the player has collided with a robot or a pile of junk, set defeated to true and break out of the game loop
-			return "robots_win"
-			
-	# remove robots that have collided with a pile of junk
-	for robot in reversed(robots):                     # ! if use unreversed, when first collision is detected and that robot is removed, second robot move into the first position in the list and it is missed by the next iteration
-		for pile in junk:
-			if collided(robot, pile):                  # 2.heck each robot in list to see if it has collided with a pile of junk, disgard the robot from list       
-				robots.remove(robot)
-				
-	# return False                                      # returns true when the player has collided with something and lost the game, and false when the player has not lost and the game should continue
-
-
-	# robots is not empty and the player has not collided with anything -- the game is still in play
-	# the player has collided with something -- the robots win
-	# the player has not collided with anything and robots is empty -- the player wins
-
-
-	# remove robots that collide and leave a pile of junk  # 3.check each remaining robots to see if they have collided with another robot, disgard all the robots and place a pile of junk at the locations they occupied
-	for index, robot1 in enumerate(robots):                # (1)check each robot in robots (outer loop, traversing forward)
-		for robot2 in reversed(robots[index+1:]):          # (2)compare it with every robot that follows it (inner loop, traversing backw)
-			if collided(robot1, robot2):                   # (3)mark the first robot as junk, and remove the second one
-				robot1['junk'] = True
-				junk.append(place_robot(robot1['x'], robot1['y'], True))
-				remove_from_screen(robot2['shape'])
-				robots.remove(robot2)
-
-	for robot in reversed(robots):                         # (4)once all robots have been checked for collisions, traverse the robots list once again in reverse, removing all robots marked as junk
-		if robot['junk']:
-			remove_from_screen(robot['shape'])
-			robots.remove(robot)
-	
-	if not robots:
-		return "player_wins"
-
-	return ""
 
 def move_robot(robot, player):
 	if robot['x'] < player['x']: robot['x'] += 1                   # x,y+-1,move to player
@@ -147,17 +112,67 @@ def move_robots(robots, player):
 	for robot in robots:
 		move_robot(robot, player)
 
+
+
+def collided(thing1, thing2):
+	return thing1['x'] == thing2['x'] and thing1['y'] == thing2['y'] # game end as soon as the player is caught, or else the robot just follows her
+																	 
+def check_collisions(robots, junk, player):
+	# check whether player has collided with anything
+	for thing in robots + junk:
+		if collided(thing, player):                    # 1.check whether the player has collided with a robot or a pile of junk, set defeated to true and break out of the game loop
+			return "robots_win"
+			
+	# remove robots that have collided with a pile of junk
+	for robot in reversed(robots):                     # ! if use unreversed, when first collision is detected and that robot is removed, second robot move into the first position in the list and it is missed by the next iteration
+		for pile in junk:
+			if collided(robot, pile):                  # 2.check each robot in list to see if it has collided with a pile of junk, disgard the robot from list       
+				remove_from_screen(robot['shape'])
+				robots.remove(robot)
+				
+	# return False                                     # returns true when the player has collided with something and lost the game, and false when the player has not lost and the game should continue
+
+
+	# robots is not empty and the player has not collided with anything -- the game is still in play
+	# the player has collided with something -- the robots win
+	# the player has not collided with anything and robots is empty -- the player wins
+
+
+	# remove robots that collide and leave a pile of junk  # 3.check each remaining robots to see if they have collided with another robot, disgard all the robots and place a pile of junk at the locations they occupied
+	for index, robot1 in enumerate(robots):                # (1)check each robot in robots (outer loop, traversing forward)
+		for robot2 in reversed(robots[index+1:]):          # (2)compare it with every robot that follows it (inner loop, traversing back)
+			if collided(robot1, robot2):                   # (3)mark the first robot as junk, and remove the second one
+				robot1['junk'] = True
+				junk.append(place_robot(robot1['x'], robot1['y'], True))
+				remove_from_screen(robot2['shape'])
+				robots.remove(robot2)
+
+	for robot in reversed(robots):                         # (4)once all robots have been checked for collisions, traverse the robots list once again in reverse, removing all robots marked as junk
+		if robot['junk']:
+			remove_from_screen(robot['shape'])
+			robots.remove(robot)
+
+	return ""
+
+
 def play_game():
 	begin_graphics(SCREEN_WIDTH, SCREEN_HEIGHT, title="Robots")
 	player = place_player()
-	robots = place_robots(2)
+	robots = place_robots(8)
 	defeated = False                                               # not defeated true
 	while not defeated:                                            # event loop
 		quit = move_player(player)          # press escape key causes move_player to return True, make not defeated false, break
 		if quit:
 			break
 		move_robots(robots, player)         # move player and move robot
-		defeated = check_collisions(robots, junk, player)  # false > loop, true(collide) > out loop
+		defeated = check_collisions(robots, junk, player)          # false > loop, true(collide) > out loop
+		
+		if not robots:                                     # 4.check if any robots remain, if not, end the game and mark the player the winner
+			for thing in junk:              # remove all the junk from the screen
+				remove_from_screen(thing['shape'])
+			Text("player_wins", (240, 240), size=32)
+			sleep(3)
+			break
 
 	if defeated:                            # check for defeated if it is true and display an appropriate message
 		remove_from_screen(player['shape'])
@@ -168,8 +183,8 @@ def play_game():
 
 	end_graphics()
 
-#~ if __name__ == '__main__':
-	#~ play_game()
+if __name__ == '__main__':
+	play_game()
 
 
 # 1.test
@@ -223,7 +238,7 @@ source.close()
 newfile = open('alice_words.txt', 'w')
 
 def count(text):
-	for i in reversed(range(len(text))):                   # alpha remain
+	for i in reversed(range(len(text))):     # alpha remain
 		if (not text[i].isalpha()) and text[i]!=' ' and text[i]!='-':
 			text=text[:i]+text[i+1:]
 	
