@@ -183,8 +183,8 @@ def play_game():
 
 	end_graphics()
 
-if __name__ == '__main__':
-	play_game()
+#~ if __name__ == '__main__':
+	#~ play_game()
 
 
 # 1.test
@@ -238,13 +238,18 @@ source.close()
 newfile = open('alice_words.txt', 'w')
 
 def count(text):
+	text=' '.join(text.split('\n'))          # replace enter with space
+	
 	for i in reversed(range(len(text))):     # alpha remain
 		if (not text[i].isalpha()) and text[i]!=' ' and text[i]!='-':
 			text=text[:i]+text[i+1:]
 	
 	lower_text=text.lower()                  # lower         
 	
+
 	lower_text=' '.join(lower_text.split('--'))
+                                             # replace '--' with space, but '-' remain
+	
 	word_list=string.split(lower_text)       # remove space, transfer to list
 	
 	
@@ -266,6 +271,7 @@ for item in counts_list:
 
 
 newfile.close()
+
 
 #3. longest
 longest=('',0)
