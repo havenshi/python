@@ -101,7 +101,7 @@ class OldMaidGame(CardGame):
 		self.printHands()
 
 		# remove initial matches
-		matches = self.removeAllMatches()
+		matches = self.remove_all_matches()
 		print "---------- Matches discarded, play begins"
 		self.printHands()
 
@@ -109,7 +109,7 @@ class OldMaidGame(CardGame):
 		turn = 0
 		numHands = len(self.hands)
 		while matches < 25:
-			matches = matches + self.playOneTurn(turn)
+			matches = matches + self.play_one_turn(turn)
 			turn = (turn + 1) % numHands
 
 		print "---------- Game is Over"
@@ -117,38 +117,38 @@ class OldMaidGame(CardGame):
 		
 		
 		
-		def remove_all_matches(self):
-			count = 0
-			for hand in self.hands:
-				count = count + hand.remove_matches()  # how many matched pairs in total hands
-			return count
+	def remove_all_matches(self):
+		count = 0
+		for hand in self.hands:
+			count = count + hand.remove_matches()  # how many matched pairs in total hands
+		return count
 
-		def play_one_turn(self, i):                    # indicates whose turn it is
-			if self.hands[i].is_empty():               # player is out of the game if his hand is empty
-				return 0
-			neighbor = self.find_neighbor(i)           
-			pickedCard = self.hands[neighbor].popCard()# take one card from neighbor
-			self.hands[i].add(pickedCard)
-			print "Hand", self.hands[i].name, "picked", pickedCard
-			count = self.hands[i].remove_matches()
-			self.hands[i].shuffle()
-			return count
+	def play_one_turn(self, i):                    # indicates whose turn it is
+		if self.hands[i].is_empty():               # player is out of the game if his hand is empty
+			return 0
+		neighbor = self.find_neighbor(i)           
+		pickedCard = self.hands[neighbor].pop()# take one card from neighbor
+		self.hands[i].add(pickedCard)
+		print "Hand", self.hands[i].name, "picked", pickedCard
+		count = self.hands[i].remove_matches()
+		self.hands[i].shuffle()
+		return count
 
-		def find_neighbor(self, i):  # start with left player and continue around the circle until it finds a player that still has cards
-			numHands = len(self.hands)
-			for next in range(1,numHands):
-				neighbor = (i + next) % numHands
-				if not self.hands[neighbor].is_empty():
-					return neighbor
+	def find_neighbor(self, i):  # start with left player and continue around the circle until it finds a player that still has cards
+		numHands = len(self.hands)
+		for next in range(1,numHands):
+			neighbor = (i + next) % numHands
+			if not self.hands[neighbor].is_empty():
+				return neighbor
 
-		def printHands(self):
-			for hand in self.hands:
-				print hand
+	def printHands(self):
+		for hand in self.hands:
+			print hand
 
 
 
-import cards
-game = cards.OldMaidGame()
+
+game = OldMaidGame()
 game.play(["Allen","Jeff","Chris"])
 #~ ---------- Cards have been dealt
 #~ Hand Allen contains
