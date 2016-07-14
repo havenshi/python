@@ -6,7 +6,7 @@ class Stack :
         self.items.append(item)
 
     def pop(self):
-        return self.items.pop()     # remove and return an item(the last one that was added) from the stack
+        return self.items.pop()     # LIFO. remove and return an item(the last one that was added) from the stack
 
     def is_empty(self):
         return (self.items == [])
