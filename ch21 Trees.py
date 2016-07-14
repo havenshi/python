@@ -248,10 +248,9 @@ def make_token_list(s):
 
 # 3.save the animal knowledge tree in a file(???)
 def dump(tree):                  
-    # returns string representation of tree in postfix-style
-    # order with commas separating nodes. Leaves are
-    # represented with two preceding commas, corresponding to
-    # the empty tree.left & tree.right attributes.
+    # returns string of tree in postfix order with commas separating nodes. 
+    # leaves are represented with two preceding commas, corresponding to the empty.
+    # left & right are attributes.
     if tree == None: return ','  
     s = ''                       
     s += dump(tree.left)        
@@ -301,7 +300,7 @@ def animal():
         guess = tree.cargo
         prompt = "Is it a " + guess + "? "
         if yes(prompt):
-            print "Yatta!"
+            print "I rule!"
             continue
 
         # get new information
